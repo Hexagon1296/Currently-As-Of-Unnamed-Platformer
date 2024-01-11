@@ -2,7 +2,7 @@ let canvas = document.getElementById("chell");
 let ctx = canvas.getContext("2d");
 let chellSP = new Image();
 let cubeSP = new Image();
-let imgs = [];
+let imgs = {};
 let keys = {};
 let scrollX = canvas.width/2;
 let scrollY = canvas.height/2;
@@ -18,7 +18,11 @@ chellSP.onload = function(){
     createImageBitmap(chellSP,0,0,189,223),
     createImageBitmap(chellSP,189,0,189,223)
   ]).then(function(imgbuff){
-    imgs.push(...imgbuff);
+    let x = {
+      "Stand-Right":imgbuff[0],
+      "Stand-Left":imgbuff[1]
+    };
+    Object.assign(imgs,x);
   })
   loading++;
 }
@@ -27,7 +31,11 @@ cubeSP.onload = function(){
     createImageBitmap(cubeSP,0,0,101,101),
     createImageBitmap(cubeSP,101,0,101,101)
   ]).then(function(imgbuff){
-    imgs.push(...imgbuff);
+    let x = {
+      "Company":imgbuff[0],
+      "Company-Active":imgbuff[1]
+    };
+    Object.assign(imgs,x);
   })
   loading++;
 }
@@ -119,9 +127,9 @@ class Player{
   }
   render(){
     if (this.dir==1) {
-      renderImg(0,this.x-this.boundLeft-this.boundW/2,this.y-this.boundUp-this.boundH/2,PLAYER_SCALE);
+      renderImg("Stand-Right",this.x-this.boundLeft-this.boundW/2,this.y-this.boundUp-this.boundH/2,PLAYER_SCALE);
     }else{
-      renderImg(1,this.x-(94.5*PLAYER_SCALE-this.boundW-this.boundLeft)-this.boundW/2,this.y-this.boundUp-this.boundH/2,PLAYER_SCALE);
+      renderImg("Stand-Left",this.x-(94.5*PLAYER_SCALE-this.boundW-this.boundLeft)-this.boundW/2,this.y-this.boundUp-this.boundH/2,PLAYER_SCALE);
     }
   }
   get getHitbox(){
@@ -263,5 +271,4 @@ setInterval(function(){
     obj.render();
   }
   player.render();
-  renderImg(2,200,200);
 },1000/60)
