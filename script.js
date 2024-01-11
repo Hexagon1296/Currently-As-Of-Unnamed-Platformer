@@ -263,4 +263,5 @@ setInterval(function(){
     obj.render();
   }
   player.render();
+  renderImg(2,200,200);
 },1000/60)
