@@ -1,6 +1,7 @@
 let canvas = document.getElementById("chell");
 let ctx = canvas.getContext("2d");
 let chellSP = new Image();
+let cubeSP = new Image();
 let imgs = [];
 let keys = {};
 let scrollX = canvas.width/2;
@@ -16,6 +17,15 @@ chellSP.onload = function(){
   Promise.all([
     createImageBitmap(chellSP,0,0,189,223),
     createImageBitmap(chellSP,189,0,189,223)
+  ]).then(function(imgbuff){
+    imgs.push(...imgbuff);
+  })
+  loading++;
+}
+cubeSP.onload = function(){
+  Promise.all([
+    createImageBitmap(cubeSP,0,0,101,101),
+    createImageBitmap(cubeSP,101,0,101,101)
   ]).then(function(imgbuff){
     imgs.push(...imgbuff);
   })
@@ -82,6 +92,7 @@ let level = {
   ]
 };
 chellSP.src = "img/chell1.png"
+cubeSP.src = "img/cube.png"
 function renderImg(imgIdx,x,y,s=1){
   let img = imgs[imgIdx];
   if(img===undefined){return;}
@@ -236,7 +247,7 @@ setInterval(function(){
   ctx.resetTransform();
   ctx.fillStyle = "#ffffff"
   ctx.fillRect(0,0,canvas.width,canvas.height);
-  if(loading<1){
+  if(loading<2){
     ctx.fillStyle = "black"
     ctx.fillRect(0,0,canvas.width,canvas.height);
     ctx.fillStyle = "white"
