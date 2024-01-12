@@ -91,16 +91,37 @@ class Polygon{
     ctx.fill();
   }
 }
+class Box{
+  constructor(x,y,cmpy=false){
+    this.x = x;
+    this.y = y;
+    this.w = 48;
+    this.h = 48;
+    this.r = 0;
+    this.cmpy = cmpy
+  }
+  render(){
+    ctx.rotateAround(this.x,this.y,this.r)
+    renderImg("Company",this.x,this.y);
+    ctx.fillStyle = "#777";
+    ctx.fillRect(this.x,this.y,this.w,this.h)
+    ctx.rotateAround(this.x,this.y,-this.r)
+  }
+}
 let level = {
   width: 1000,
   height: 600,
   collideables: [
     new Rectangle(0,540,1000,60),
     new Polygon([100,400],[100+25*Math.sqrt(3),375],[100+50*Math.sqrt(3),400],[100+50*Math.sqrt(3),450],[100+25*Math.sqrt(3),475],[100,450]),
+  ],
+  entities: [
+    new Box(100,100,true)
   ]
 };
 chellSP.src = "img/chell1.png"
 cubeSP.src = "img/cube.png"
+let entities = [...level.entities];
 function renderImg(imgIdx,x,y,s=1){
   let img = imgs[imgIdx];
   if(img===undefined){return;}
@@ -269,6 +290,9 @@ setInterval(function(){
   ctx.fillStyle = "black";
   for(let obj of level.collideables){
     obj.render();
+  }
+  for(let ent of entities){
+    ent.render();
   }
   player.render();
 },1000/60)
