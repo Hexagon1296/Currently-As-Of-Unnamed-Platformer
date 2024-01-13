@@ -103,8 +103,6 @@ class Box{
   render(){
     ctx.rotateAround(this.x,this.y,this.r)
     renderImg("Company",this.x,this.y);
-    ctx.fillStyle = "#777";
-    ctx.fillRect(this.x,this.y,this.w,this.h)
     ctx.rotateAround(this.x,this.y,-this.r)
   }
 }
