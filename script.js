@@ -98,20 +98,101 @@ class Box{
     this.w = 48;
     this.h = 48;
     this.r = 0;
+    this.xVel = 0;
+    this.yVel = 0;
     this.cmpy = cmpy
   }
   render(){
     ctx.rotateAround(this.x,this.y,this.r)
-    renderImg("Company",this.x,this.y);
+    renderImg("Company",this.x+1,this.y+1);
     ctx.rotateAround(this.x,this.y,-this.r)
+  }
+  update(){
+    this.yVel+=GRAVITY
+    this.xStep(Math.ceil(Math.abs(this.xVel)));
+    this.yStep(Math.ceil(Math.abs(this.yVel)));
+  }
+  xStep(step){
+    for(let _ = 0;_<step;_++){
+      this.x+=this.xVel/step
+      if(this.collide()){
+        this.y--;
+        if(this.collide()){
+          this.y--
+          if(this.collide()){
+            this.y += 2;
+            this.x-=this.xVel/step;
+            this.xVel = 0;
+            return;
+          }
+          this.xVel *= 0.9
+        }
+        this.xVel *= 0.95
+        this.slip();
+      }
+    }
+  }
+  yStep(step){
+    for(let _ = 0;_<step;_++){
+      this.y+=this.yVel/step
+      if(this.collide()) {
+        this.y-=this.yVel/step;
+        this.yVel *= 0.8;
+        this.slip();
+        return;
+      }
+    }
+  }
+  slip(){
+    this.y += 2;
+    this.x++;
+    if(!this.collide()){
+      this.y -= 2;
+      this.x--;
+      this.xVel++;
+      return;
+    }
+    this.x -= 2;
+    if(!this.collide()){
+      this.y -= 2;
+      this.x++;
+      this.xVel--;
+      return;
+    }
+    this.y -= 2;
+    this.x++;
+  }
+  collide(){
+    for(let obj of level.collideables){
+      switch(Object.getPrototypeOf(obj).constructor.name){
+        case "Rectangle":
+          if(this.collideRect(obj)) {return true;}
+          break;
+        case "Ellipse":
+          if(this.collideEllipse(obj)) {return true;}
+          break;
+        case "Polygon":
+          if(this.collidePoly(obj)) {return true;}
+          break;
+      }
+    }
+    return false;
+  }
+  collideRect(obj){
+    return collideRectRect(this,obj);
+  }
+  collideEllipse(obj){
+    return collideEllipseRect(obj,this);
+  }
+  collidePoly(obj){
+    return collidePolyRect(obj.verts,this);
   }
 }
 let level = {
   width: 1000,
   height: 600,
   collideables: [
-    new Rectangle(0,540,1000,60),
-    new Polygon([100,400],[100+25*Math.sqrt(3),375],[100+50*Math.sqrt(3),400],[100+50*Math.sqrt(3),450],[100+25*Math.sqrt(3),475],[100,450]),
+    new Rectangle(0,540,1000,60)
   ],
   entities: [
     new Box(100,100,true)
@@ -284,6 +365,9 @@ setInterval(function(){
     return;
   }
   player.update();
+  for(let ent of entities){
+    ent.update();
+  }
   ctx.translate(canvas.width/2-scrollX,canvas.height/2-scrollY);
   ctx.fillStyle = "black";
   for(let obj of level.collideables){
