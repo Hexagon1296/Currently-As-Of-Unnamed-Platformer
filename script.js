@@ -95,8 +95,8 @@ class Box{
   constructor(x,y,cmpy=false){
     this.x = x;
     this.y = y;
-    this.w = 48;
-    this.h = 48;
+    this.w = 96;
+    this.h = 96;
     this.r = 0;
     this.xVel = 0;
     this.yVel = 0;
